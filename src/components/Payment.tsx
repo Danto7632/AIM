@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { CreditCard, Building2, CheckCircle, Download, FileText, ChevronRight, ArrowLeft } from 'lucide-react';
+import { useSavedDocuments } from '../contexts/SavedDocumentsContext';
 
 type PaymentStep = 'summary' | 'method' | 'confirmation' | 'history';
 
-export function Payment() {
+interface PaymentProps {
+  onNavigateToStorage: () => void;
+  onNavigateHome: () => void;
+}
+
+export function Payment({ onNavigateToStorage, onNavigateHome }: PaymentProps) {
   const [step, setStep] = useState<PaymentStep>('summary');
   const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [hasSaved, setHasSaved] = useState(false);
+  const { saveDocuments } = useSavedDocuments();
 
   const documents = [
     { name: '주민등록등본', agency: '정부24', fee: 1000 },
@@ -21,6 +29,21 @@ export function Payment() {
     { id: 'toss', name: '토스페이', icon: Building2 },
     { id: 'bank', name: '계좌이체', icon: Building2 }
   ];
+  const resetFlow = () => {
+    setStep('summary');
+    setSelectedMethod('');
+    setHasSaved(false);
+  };
+
+  const handleCompletePayment = () => {
+    if (!selectedMethod) return;
+    if (!hasSaved) {
+      saveDocuments(documents.map((doc) => ({ name: doc.name, agency: doc.agency })));
+      setHasSaved(true);
+    }
+    setStep('confirmation');
+  };
+
 
   const paymentHistory = [
     { id: 1, date: '2025.11.18', title: '전입신고 자동발급 세트', amount: 1000 },
@@ -112,7 +135,7 @@ export function Payment() {
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <button
-          onClick={() => setStep('summary')}
+          onClick={resetFlow}
           className="mb-4 md:mb-6 flex items-center gap-2 text-sm md:text-base"
           style={{ color: '#1A73E8' }}
         >
@@ -161,7 +184,7 @@ export function Payment() {
         </div>
 
         <button
-          onClick={() => setStep('confirmation')}
+          onClick={handleCompletePayment}
           disabled={!selectedMethod}
           className="w-full px-6 py-3 md:py-4 rounded-2xl transition-all disabled:opacity-50 text-sm md:text-base"
           style={{
@@ -235,7 +258,10 @@ export function Payment() {
         </div>
 
         <button
-          onClick={() => setStep('summary')}
+          onClick={() => {
+            onNavigateToStorage();
+            resetFlow();
+          }}
           className="w-full px-6 py-3 md:py-4 rounded-2xl transition-all text-sm md:text-base"
           style={{
             backgroundColor: '#1A73E8',
@@ -246,7 +272,10 @@ export function Payment() {
         </button>
 
         <button
-          onClick={() => setStep('summary')}
+          onClick={() => {
+            onNavigateHome();
+            resetFlow();
+          }}
           className="w-full mt-3 px-6 py-3 md:py-4 rounded-2xl border transition-all text-sm md:text-base"
           style={{
             backgroundColor: '#FFFFFF',
@@ -265,7 +294,7 @@ export function Payment() {
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <button
-          onClick={() => setStep('summary')}
+          onClick={resetFlow}
           className="mb-4 md:mb-6 flex items-center gap-2 text-sm md:text-base"
           style={{ color: '#1A73E8' }}
         >
