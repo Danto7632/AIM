@@ -196,16 +196,13 @@ function ChatBubble({ message, onNavigateToPayment, onNavigateToStorage, hasSave
               ))}
             </div>
 
-            <div className="flex flex-col md:flex-row gap-2 md:gap-3">
-              <button className="flex-1 px-4 py-3 rounded-xl transition-all text-sm md:text-base" style={{ backgroundColor: '#1A73E8', color: '#FFFFFF' }}>
-                서류 자동발급
-              </button>
+            <div className="flex flex-col gap-2 md:gap-3">
               <button
                 onClick={onNavigateToPayment}
-                className="flex-1 px-4 py-3 rounded-xl border transition-all text-sm md:text-base"
-                style={{ backgroundColor: '#FFFFFF', borderColor: '#E4E8EE', color: '#0D1321' }}
+                className="w-full px-4 py-3 rounded-xl transition-all text-sm md:text-base"
+                style={{ backgroundColor: '#1A73E8', color: '#FFFFFF' }}
               >
-                결제 진행
+                서류 발급
               </button>
             </div>
 
